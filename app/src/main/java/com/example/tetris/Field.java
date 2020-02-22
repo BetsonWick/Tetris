@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class Field {
+    private static final int SHIFT = 4;
     private Cell[][] field;
     private int width;
     private int height;
@@ -13,7 +14,19 @@ public class Field {
     private int tilesY;
 
     public Field(int width, int height) {
-        field = new Cell[width][height];
+        field = new Cell[width + SHIFT * 2][height + SHIFT];
+        for (int i = 0; i < width + SHIFT * 2; i++) {
+            for (int j = 0; j < height + SHIFT; j++) {
+                field[i][j] = Cell.BLANK;
+            }
+        }
+        for (int i = 0; i <= height; i++) {
+            field[SHIFT - 1][i] = Cell.FILLED;
+            field[width + SHIFT][i] = Cell.FILLED;
+        }
+        for (int i = SHIFT - 1; i <= width + SHIFT; i++) {
+            field[i][height] = Cell.FILLED;
+        }
         tilesX = width;
         tilesY = height;
     }
@@ -26,17 +39,25 @@ public class Field {
         this.height = height;
     }
 
-    public boolean isEmpty(int x, int y) {
-        if (x < 0 || x >= tilesX || y < 0 || y >= tilesY) {
-            return false;
+    public boolean checkTileSide(Tile tile, int dir) {
+        int[][] state = tile.getCurrentShape();
+        for (int x = 0; x < Tile.SIZE; x++) {
+            for (int y = 0; y < Tile.SIZE; y++) {
+                int posX = tile.getX() + x + SHIFT;
+                int posY = tile.getY() + y;
+                if (field[posX + dir][posY] == Cell.FILLED &&
+                        state[y][x] == 1) {
+                    return false;
+                }
+            }
         }
-        return field[x][y] == Cell.BLANK;
+        return true;
     }
 
-    public boolean update(Tile tile) {
-        for (int i = tilesY - 1; i >= 0; i--) {
+    public void update(Tile tile) {
+        for (int i = 0; i < tilesY; i++) {
             int counter = 0;
-            for (int j = 0; j < tilesX; j++) {
+            for (int j = SHIFT; j < tilesX + SHIFT; j++) {
                 if (field[j][i] == Cell.MOVING) {
                     field[j][i] = Cell.BLANK;
                 }
@@ -44,35 +65,37 @@ public class Field {
                     counter++;
                 }
             }
-            if (counter == tilesX) {
-                for (int j = 0; j < tilesX; j++) {
-                    field[j][i] = Cell.BLANK;
+            if (counter == tilesX && i > 0) {
+                for (int k = 1; k <= i; k++) {
+                    for (int j = SHIFT; j < tilesX + SHIFT; j++) {
+                        field[j][k] = field[j][k - 1];
+                    }
                 }
             }
         }
         setTileIn(tile, Cell.MOVING);
-        return !checkCollision(tile);
     }
 
     public void setTileIn(Tile tile, Cell toFill) {
-        for (int i = 0; i < tile.getWidth(); i++) {
-            for (int j = 0; j < tile.getHeight(); j++) {
-                Cell currentCell = tile.getCellAt(i, j);
-                if (currentCell != Cell.BLANK) {
-                    field[i + tile.getX()][j + tile.getY()] = toFill;
+        for (int i = 0; i < Tile.SIZE; i++) {
+            for (int j = 0; j < Tile.SIZE; j++) {
+                if (tile.getCurrentShape()[i][j] != 0) {
+                    field[j + tile.getX() + SHIFT][i + tile.getY()] = toFill;
                 }
             }
         }
     }
 
-    private boolean checkCollision(Tile tile) {
-        if (tile.getY() + tile.getHeight() == tilesY) {
-            return true;
-        }
-        for (int i = 0; i < tile.getWidth(); i++) {
-            if (field[i + tile.getX()][tile.getY() + tile.getHeight()] == Cell.FILLED &&
-                    tile.getCellAt(i, tile.getHeight() - 1) == Cell.MOVING) {
-                return true;
+    public boolean checkCollision(Tile tile) {
+        int[][] state = tile.getCurrentShape();
+        for (int x = 0; x < Tile.SIZE; x++) {
+            for (int y = 0; y < Tile.SIZE; y++) {
+                int posX = tile.getX() + x + SHIFT;
+                int posY = tile.getY() + y;
+                if (field[posX][posY + 1] == Cell.FILLED &&
+                        state[y][x] == 1) {
+                    return true;
+                }
             }
         }
         return false;
@@ -81,7 +104,7 @@ public class Field {
     public void clearField() {
         for (int i = 0; i < tilesX; i++) {
             for (int j = 0; j < tilesY; j++) {
-                field[i][j] = Cell.BLANK;
+                field[i + SHIFT][j] = Cell.BLANK;
             }
         }
     }
@@ -95,7 +118,7 @@ public class Field {
                 int leftX = i * tileSize;
                 int leftY = j * tileSize - heightDifference;
                 int cellColor;
-                switch (field[i][j]) {
+                switch (field[i + SHIFT][j]) {
                     case BLANK:
                         cellColor = Color.WHITE;
                         break;

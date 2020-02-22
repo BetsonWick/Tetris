@@ -34,7 +34,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void setupTile(double random) {
-        int type = (int) (random * 3);
+        int type = (int) (random * 2);
         currentTile = new Tile(TileType.values()[type]);
         currentTile.setX(TILES_X / 2);
         currentTile.setY(0);
@@ -53,7 +53,8 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         frameCounter++;
         if (currentTile != null && frameCounter % 4 == 0) {
             currentTile.setY(currentTile.getY() + 1);
-            if (!field.update(currentTile)) {
+            field.update(currentTile);
+            if (field.checkCollision(currentTile)) {
                 field.setTileIn(currentTile, Cell.FILLED);
                 setupTile(Math.random());
             }
@@ -78,12 +79,14 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     public boolean onTouchEvent(MotionEvent event) {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN && currentTile != null) {
-            boolean right = event.getX() > displayWidth / 2;
-            if (right && currentTile.getX() + currentTile.getWidth() < TILES_X) {
+            if (event.getX() > displayWidth * 2 / 3 && field.checkTileSide(currentTile, 1)) {
                 currentTile.setX(currentTile.getX() + 1);
             }
-            if (!right && currentTile.getX() > 0) {
+            if (event.getX() < displayWidth / 3  && field.checkTileSide(currentTile, -1)) {
                 currentTile.setX(currentTile.getX() - 1);
+            }
+            if(event.getX() >= displayWidth / 2 && event.getX() <= displayWidth * 2 /3){
+                currentTile.changeRotation();
             }
         }
         return super.onTouchEvent(event);
