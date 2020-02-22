@@ -23,6 +23,13 @@ public class Tile {
         shape[2] = new int[][]{{0, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}};
         shape[3] = new int[][]{{0, 0, 0, 0}, {1, 1, 1, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}};
         tileToShape.put(TileType.LONG, shape);
+        shape = new int[4][4][4];
+        shape[0] = new int[][]{{1, 0, 0, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+        shape[1] = new int[][]{{0, 1, 1, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
+        shape[2] = new int[][]{{0, 0, 0, 0}, {1, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}};
+        shape[3] = new int[][]{{0, 1, 0, 0}, {0, 1, 0, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}};
+        tileToShape.put(TileType.CORNER, shape);
+
     }
 
 
@@ -49,6 +56,14 @@ public class Tile {
 
     public int[][] getCurrentShape() {
         return shape[rotation];
+    }
+
+    public int getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(int rotation) {
+        this.rotation = rotation % SIZE;
     }
 
     public void changeRotation() {

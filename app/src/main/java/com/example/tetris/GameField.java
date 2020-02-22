@@ -34,7 +34,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void setupTile(double random) {
-        int type = (int) (random * 2);
+        int type = (int) (random * 3    );
         currentTile = new Tile(TileType.values()[type]);
         currentTile.setX(TILES_X / 2);
         currentTile.setY(0);
@@ -52,12 +52,12 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     public void update() {
         frameCounter++;
         if (currentTile != null && frameCounter % 4 == 0) {
-            currentTile.setY(currentTile.getY() + 1);
             field.update(currentTile);
             if (field.checkCollision(currentTile)) {
                 field.setTileIn(currentTile, Cell.FILLED);
                 setupTile(Math.random());
             }
+            currentTile.setY(currentTile.getY() + 1);
         }
         if (frameCounter == MainThread.MAX_FPS) {
             frameCounter = 0;
@@ -77,16 +77,20 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
+        double oneThird = displayWidth / 3;
         if (event.getAction() == MotionEvent.ACTION_DOWN && currentTile != null) {
-            if (event.getX() > displayWidth * 2 / 3 && field.checkTileSide(currentTile, 1)) {
+            if (event.getX() > oneThird * 2 && field.checkTileSide(currentTile, 1)) {
                 currentTile.setX(currentTile.getX() + 1);
             }
-            if (event.getX() < displayWidth / 3  && field.checkTileSide(currentTile, -1)) {
+            if (event.getX() < oneThird && field.checkTileSide(currentTile, -1)) {
                 currentTile.setX(currentTile.getX() - 1);
             }
-            if(event.getX() >= displayWidth / 2 && event.getX() <= displayWidth * 2 /3){
+            if (event.getX() >= oneThird && event.getX() <= oneThird * 2) {
+                int prevRotation = currentTile.getRotation();
                 currentTile.changeRotation();
+                if (!field.checkTileSide(currentTile, 0)) {
+                    currentTile.setRotation(prevRotation);
+                }
             }
         }
         return super.onTouchEvent(event);
