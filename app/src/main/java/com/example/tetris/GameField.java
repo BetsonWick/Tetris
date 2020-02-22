@@ -10,6 +10,8 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     private final int TILES_X = 10;
     private final int TILES_Y = 20;
 
+    public static int points;
+
     Tile currentTile;
 
     private MainThread thread;
@@ -18,6 +20,8 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     private int displayHeight;
 
     private int frameCounter = 0;
+
+    private boolean isCollided;
 
     public GameField(Context context) {
         super(context);
@@ -34,7 +38,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void setupTile(double random) {
-        int type = (int) (random * 3    );
+        int type = (int) (random * 3);
         currentTile = new Tile(TileType.values()[type]);
         currentTile.setX(TILES_X / 2);
         currentTile.setY(0);
@@ -47,20 +51,23 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         thread.setRunning(true);
         thread.start();
         setupTile(Math.random());
+        points = 0;
+        isCollided = false;
     }
 
     public void update() {
         frameCounter++;
-        if (currentTile != null && frameCounter % 4 == 0) {
+        if (frameCounter == MainThread.MAX_FPS) {
+            frameCounter = 0;
+        }
+        if (currentTile != null && frameCounter % 8 == 0) {
             field.update(currentTile);
             if (field.checkCollision(currentTile)) {
                 field.setTileIn(currentTile, Cell.FILLED);
                 setupTile(Math.random());
+            } else {
+                currentTile.setY(currentTile.getY() + 1);
             }
-            currentTile.setY(currentTile.getY() + 1);
-        }
-        if (frameCounter == MainThread.MAX_FPS) {
-            frameCounter = 0;
         }
     }
 

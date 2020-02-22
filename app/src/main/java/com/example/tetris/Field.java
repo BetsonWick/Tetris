@@ -66,7 +66,7 @@ public class Field {
                 }
             }
             if (counter == tilesX && i > 0) {
-                for (int k = 1; k <= i; k++) {
+                for (int k = i; k > 0; k--) {
                     for (int j = SHIFT; j < tilesX + SHIFT; j++) {
                         field[j][k] = field[j][k - 1];
                     }
