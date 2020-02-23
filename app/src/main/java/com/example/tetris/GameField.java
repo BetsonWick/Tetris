@@ -2,11 +2,15 @@ package com.example.tetris;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class GameField extends SurfaceView implements SurfaceHolder.Callback {
+    public final static int FPS_SPLIT = 8;
     private final int TILES_X = 10;
     private final int TILES_Y = 20;
 
@@ -20,8 +24,6 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     private int displayHeight;
 
     private int frameCounter = 0;
-
-    private boolean isCollided;
 
     public GameField(Context context) {
         super(context);
@@ -52,7 +54,6 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         thread.start();
         setupTile(Math.random());
         points = 0;
-        isCollided = false;
     }
 
     public void update() {
@@ -60,21 +61,27 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         if (frameCounter == MainThread.MAX_FPS) {
             frameCounter = 0;
         }
-        if (currentTile != null && frameCounter % 8 == 0) {
-            field.update(currentTile);
-            if (field.checkCollision(currentTile)) {
-                field.setTileIn(currentTile, Cell.FILLED);
-                setupTile(Math.random());
-            } else {
-                currentTile.setY(currentTile.getY() + 1);
+        if (currentTile != null) {
+            if (frameCounter % FPS_SPLIT == 0) {
+                field.update(currentTile);
+                if (field.checkCollision(currentTile)) {
+                    field.setTileIn(currentTile, Cell.FILLED);
+                    setupTile(Math.random());
+                } else {
+                    currentTile.setY(currentTile.getY() + 1);
+                }
             }
+            currentTile.setMovingShift(frameCounter % FPS_SPLIT);
         }
     }
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        field.draw(canvas);
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        canvas.drawRect(new Rect(0, 0, displayWidth, displayHeight), paint);
+        field.draw(canvas, currentTile.getMovingShift());
     }
 
     @Override

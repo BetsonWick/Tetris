@@ -6,6 +6,7 @@ public class Tile {
     public static final int SIZE = 4;
     private static HashMap<TileType, int[][][]> tileToShape;
 
+    private int movingShift;
     private int[][][] shape;
     private int x;
     private int y;
@@ -36,6 +37,14 @@ public class Tile {
     public Tile(TileType type) {
         rotation = 0;
         shape = tileToShape.get(type);
+    }
+
+    public int getMovingShift() {
+        return movingShift;
+    }
+
+    public void setMovingShift(int movingShift) {
+        this.movingShift = movingShift;
     }
 
     public int getX() {
