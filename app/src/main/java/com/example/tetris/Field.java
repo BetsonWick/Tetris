@@ -17,15 +17,15 @@ public class Field {
         field = new CellUnit[width + SHIFT * 2][height + SHIFT];
         for (int i = 0; i < width + SHIFT * 2; i++) {
             for (int j = 0; j < height + SHIFT; j++) {
-                field[i][j] = new CellUnit(Cell.BLANK, CellColor.WHITE);
+                field[i][j] = new CellUnit(Cell.BLANK, Color.WHITE);
             }
         }
         for (int i = 0; i <= height; i++) {
-            field[SHIFT - 1][i] = new CellUnit(Cell.FILLED, CellColor.WHITE);
-            field[width + SHIFT][i] = new CellUnit(Cell.FILLED, CellColor.WHITE);
+            field[SHIFT - 1][i] = new CellUnit(Cell.FILLED, Color.WHITE);
+            field[width + SHIFT][i] = new CellUnit(Cell.FILLED, Color.WHITE);
         }
         for (int i = SHIFT - 1; i <= width + SHIFT; i++) {
-            field[i][height] = new CellUnit(Cell.FILLED, CellColor.WHITE);
+            field[i][height] = new CellUnit(Cell.FILLED, Color.WHITE);
         }
         tilesX = width;
         tilesY = height;
@@ -69,6 +69,7 @@ public class Field {
                 for (int k = i; k > 0; k--) {
                     for (int j = SHIFT; j < tilesX + SHIFT; j++) {
                         field[j][k].cell = field[j][k - 1].cell;
+                        field[j][k].color = field[j][k - 1].color;
                     }
                 }
             }
@@ -81,6 +82,7 @@ public class Field {
             for (int j = 0; j < Tile.SIZE; j++) {
                 if (tile.getCurrentShape()[i][j] != 0) {
                     field[j + tile.getX() + SHIFT][i + tile.getY()].cell = toFill;
+                    field[j + tile.getX() + SHIFT][i + tile.getY()].color = tile.getTileColor();
                 }
             }
         }
@@ -114,27 +116,24 @@ public class Field {
         Paint paint = new Paint();
         for (int i = 0; i < tilesX; i++) {
             for (int j = 0; j < tilesY; j++) {
+                CellUnit currentUnit = field[i + SHIFT][j];
                 double shift = 0;
-                int cellColor;
-
-                switch (field[i + SHIFT][j].cell) {
-                    case BLANK:
-                        continue;
-                    case FILLED:
-                        cellColor = Color.GRAY;
-                        break;
-                    case MOVING:
-                        cellColor = Color.RED;
-                        shift = tileSize * tileShift / GameField.FPS_SPLIT;
-                        break;
-                    default:
-                        cellColor = Color.BLACK;
+                if (currentUnit.cell == Cell.BLANK) {
+                    continue;
+                }
+                if (currentUnit.cell == Cell.MOVING) {
+                    shift = tileSize * tileShift / GameField.FPS_SPLIT;
                 }
                 int heightDifference = tilesY * tileSize - height;
                 int leftX = i * tileSize;
                 int leftY = j * tileSize - heightDifference + (int) (shift);
                 Rect rect = new Rect(leftX, leftY, leftX + tileSize, leftY + tileSize);
-                paint.setColor(cellColor);
+                paint.setColor(field[i + SHIFT][j].color);
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawRect(rect, paint);
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setColor(Color.GRAY);
+                paint.setStrokeWidth(4);
                 canvas.drawRect(rect, paint);
             }
         }

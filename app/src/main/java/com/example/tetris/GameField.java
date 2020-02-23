@@ -39,11 +39,12 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         field.clearField();
     }
 
-    private void setupTile(double random) {
-        int type = (int) (random * 3);
+    private void setupTile() {
+        int type = (int) (Math.random() * 3);
         currentTile = new Tile(TileType.values()[type]);
         currentTile.setX(TILES_X / 2);
         currentTile.setY(0);
+        currentTile.setRandomColor(Math.random());
     }
 
     @Override
@@ -52,7 +53,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
-        setupTile(Math.random());
+        setupTile();
         points = 0;
     }
 
@@ -66,7 +67,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
                 field.update(currentTile);
                 if (field.checkCollision(currentTile)) {
                     field.setTileIn(currentTile, Cell.FILLED);
-                    setupTile(Math.random());
+                    setupTile();
                 } else {
                     currentTile.setY(currentTile.getY() + 1);
                 }
