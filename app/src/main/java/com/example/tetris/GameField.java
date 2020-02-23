@@ -99,13 +99,13 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         double oneThird = displayWidth / 3;
-        double heightStep = displayHeight * 3 / 4;
+        double heightStep = displayHeight * 0.9;
         FPS_SPLIT = 8;
         if (event.getAction() == MotionEvent.ACTION_UP) {
             isTouching = false;
         }
         if (isTouching && event.getY() > heightStep) {
-            FPS_SPLIT = 1;
+            FPS_SPLIT = 2;
             return true;
         }
         if (event.getAction() == MotionEvent.ACTION_DOWN && currentTile != null) {
