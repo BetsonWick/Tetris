@@ -12,9 +12,9 @@ import android.view.SurfaceView;
 public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     public final static int FPS_SPLIT = 8;
     private final int TILES_X = 10;
-    private final int TILES_Y = 20;
-
-    public static int points;
+    private final int TILES_Y = 22;
+    private final int step = 100;
+    public static int points = 0;
 
     Tile currentTile;
 
@@ -23,6 +23,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     private int displayWidth;
     private int displayHeight;
 
+    private int currentFPS;
     private int frameCounter = 0;
 
     public GameField(Context context) {
@@ -30,6 +31,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
+        currentFPS = 32;
     }
 
     private void setupField() {
@@ -40,7 +42,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void setupTile() {
-        int type = (int) (Math.random() * 3);
+        int type = (int) (Math.random() * 4);
         currentTile = new Tile(TileType.values()[type]);
         currentTile.setX(TILES_X / 2);
         currentTile.setY(0);
@@ -54,7 +56,6 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         thread.setRunning(true);
         thread.start();
         setupTile();
-        points = 0;
     }
 
     public void update() {
@@ -83,6 +84,11 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         paint.setColor(Color.WHITE);
         canvas.drawRect(new Rect(0, 0, displayWidth, displayHeight), paint);
         field.draw(canvas, currentTile.getMovingShift());
+        paint.setColor(Color.BLACK);
+        int textSize = 50;
+        paint.setTextSize(textSize);
+        canvas.drawText("Score: " + points, step / 2, step, paint);
+        canvas.drawText("FPS: " + currentFPS, step / 2, step + textSize * 1.5f, paint);
     }
 
     @Override
@@ -130,5 +136,9 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
 
     public void setDisplayHeight(int displayHeight) {
         this.displayHeight = displayHeight;
+    }
+
+    public void setCurrentFPS(int currentFPS) {
+        this.currentFPS = currentFPS;
     }
 }

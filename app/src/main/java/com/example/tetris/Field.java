@@ -12,6 +12,7 @@ public class Field {
     private int height;
     private int tilesX;
     private int tilesY;
+    private int[] scores;
 
     public Field(int width, int height) {
         field = new CellUnit[width + SHIFT * 2][height + SHIFT];
@@ -29,6 +30,11 @@ public class Field {
         }
         tilesX = width;
         tilesY = height;
+        scores = new int[4];
+        scores[0] = 100;
+        for (int i = 1; i < 4; i++) {
+            scores[i] = scores[i - 1] * 2 + 100;
+        }
     }
 
     public void setWidth(int width) {
@@ -55,6 +61,7 @@ public class Field {
     }
 
     public void update(Tile tile) {
+        int filledLinesCounter = 0;
         for (int i = 0; i < tilesY; i++) {
             int counter = 0;
             for (int j = SHIFT; j < tilesX + SHIFT; j++) {
@@ -66,6 +73,7 @@ public class Field {
                 }
             }
             if (counter == tilesX && i > 0) {
+                filledLinesCounter++;
                 for (int k = i; k > 0; k--) {
                     for (int j = SHIFT; j < tilesX + SHIFT; j++) {
                         field[j][k].cell = field[j][k - 1].cell;
@@ -73,6 +81,9 @@ public class Field {
                     }
                 }
             }
+        }
+        if (filledLinesCounter > 0) {
+            GameField.points += scores[filledLinesCounter - 1];
         }
         setTileIn(tile, Cell.MOVING);
     }

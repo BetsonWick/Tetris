@@ -33,6 +33,12 @@ public class Tile {
         shape[2] = new int[][]{{0, 0, 0, 0}, {1, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}};
         shape[3] = new int[][]{{0, 1, 0, 0}, {0, 1, 0, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}};
         tileToShape.put(TileType.CORNER, shape);
+        shape = new int[4][4][4];
+        shape[0] = new int[][]{{0, 0, 1, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+        shape[1] = new int[][]{{0, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}};
+        shape[2] = new int[][]{{0, 0, 0, 0}, {1, 1, 1, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}};
+        shape[3] = new int[][]{{1, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
+        tileToShape.put(TileType.CORNER2, shape);
 
     }
 
