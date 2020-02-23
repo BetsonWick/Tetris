@@ -12,7 +12,7 @@ import android.view.SurfaceView;
 public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     public static int FPS_SPLIT = 8;
     private final int TILES_X = 10;
-    private final int TILES_Y = 22;
+    private final int TILES_Y = 22; 
     private final int step = 100;
     public static int points = 0;
 
