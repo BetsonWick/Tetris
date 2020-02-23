@@ -10,7 +10,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class GameField extends SurfaceView implements SurfaceHolder.Callback {
-    public final static int FPS_SPLIT = 8;
+    public static int FPS_SPLIT = 8;
     private final int TILES_X = 10;
     private final int TILES_Y = 22;
     private final int step = 100;
@@ -22,7 +22,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     private Field field;
     private int displayWidth;
     private int displayHeight;
-
+    private boolean isTouching = false;
     private int currentFPS;
     private int frameCounter = 0;
 
@@ -42,7 +42,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void setupTile() {
-        int type = (int) (Math.random() * 4);
+        int type = (int) (Math.random() * 7);
         currentTile = new Tile(TileType.values()[type]);
         currentTile.setX(TILES_X / 2);
         currentTile.setY(0);
@@ -99,7 +99,20 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         double oneThird = displayWidth / 3;
+        double heightStep = displayHeight * 3 / 4;
+        FPS_SPLIT = 8;
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            isTouching = false;
+        }
+        if (isTouching && event.getY() > heightStep) {
+            FPS_SPLIT = 1;
+            return true;
+        }
         if (event.getAction() == MotionEvent.ACTION_DOWN && currentTile != null) {
+            isTouching = true;
+            if(event.getY() > heightStep){
+                return true;
+            }
             if (event.getX() > oneThird * 2 && field.checkTileSide(currentTile, 1)) {
                 currentTile.setX(currentTile.getX() + 1);
             }
@@ -114,6 +127,8 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
                 }
             }
         }
+
+
         return super.onTouchEvent(event);
     }
 

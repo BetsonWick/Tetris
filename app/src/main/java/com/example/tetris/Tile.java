@@ -39,6 +39,24 @@ public class Tile {
         shape[2] = new int[][]{{0, 0, 0, 0}, {1, 1, 1, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}};
         shape[3] = new int[][]{{1, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
         tileToShape.put(TileType.CORNER2, shape);
+        shape = new int[4][4][4];
+        shape[0] = new int[][]{{0, 1, 1, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+        shape[1] = new int[][]{{0, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}};
+        shape[2] = new int[][]{{0, 0, 0, 0}, {0, 1, 1, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}};
+        shape[3] = new int[][]{{1, 0, 0, 0}, {1, 1, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
+        tileToShape.put(TileType.ZIG_ZAG, shape);
+        shape = new int[4][4][4];
+        shape[0] = new int[][]{{1, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+        shape[1] = new int[][]{{0, 0, 1, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
+        shape[2] = new int[][]{{0, 0, 0, 0}, {1, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}};
+        shape[3] = new int[][]{{0, 1,  0, 0}, {1, 1, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}};
+        tileToShape.put(TileType.ZIG_ZAG2, shape);
+        shape = new int[4][4][4];
+        shape[0] = new int[][]{{0, 1, 0, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+        shape[1] = new int[][]{{0, 1, 0, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
+        shape[2] = new int[][]{{0, 0, 0, 0}, {1, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
+        shape[3] = new int[][]{{0, 1,  0, 0}, {1, 1, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
+        tileToShape.put(TileType.MIDDLE, shape);
 
     }
 
@@ -94,7 +112,7 @@ public class Tile {
     }
 
     public void setRandomColor(double randomValue) {
-        int val = (int) (randomValue * 5);
+        int val = (int) (randomValue * 6);
         switch (val) {
             case 0:
                 tileColor = Color.BLUE;
@@ -110,6 +128,9 @@ public class Tile {
                 break;
             case 4:
                 tileColor = Color.MAGENTA;
+                break;
+            case 5:
+                tileColor = Color.CYAN;
                 break;
         }
     }

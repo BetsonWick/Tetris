@@ -61,7 +61,6 @@ public class MainThread extends Thread {
             totalTime += (System.nanoTime() - startTime);
             frameCount++;
             if (totalTime >= secNano) {
-                System.out.println(frameCount);
                 field.setCurrentFPS(frameCount);
                 totalTime = 0;
                 frameCount = 0;
