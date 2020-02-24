@@ -1,4 +1,4 @@
-package com.example.tetris;
+package wasteed.project;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,9 +10,12 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class GameField extends SurfaceView implements SurfaceHolder.Callback {
-    public static int FPS_SPLIT = 8;
+    public static final int FPS_SPLIT = 8;
+    public static final int SMALL_FPS_SPLIT = 2;
+    public static int currentSplit = 8;
+    public boolean isPaused = false;
     private final int TILES_X = 10;
-    private final int TILES_Y = 22; 
+    private final int TILES_Y = 22;
     private final int step = 100;
     public static int points = 0;
 
@@ -22,9 +25,11 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     private Field field;
     private int displayWidth;
     private int displayHeight;
-    private boolean isTouching = false;
+    private boolean isTouchingSpeedUp = false;
     private int currentFPS;
     private int frameCounter = 0;
+
+    private Layout layout;
 
     public GameField(Context context) {
         super(context);
@@ -32,6 +37,7 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
         currentFPS = 32;
+        layout = Layout.GAME_FIELD;
     }
 
     private void setupField() {
@@ -49,22 +55,45 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         currentTile.setRandomColor(Math.random());
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
+    private void setupGameField(SurfaceHolder holder) {
         setupField();
-        thread = new MainThread(getHolder(), this);
-        thread.setRunning(true);
-        thread.start();
         setupTile();
     }
 
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        switch (layout) {
+            case GAME_FIELD:
+                setupGameField(holder);
+                break;
+            case MENU:
+                break;
+        }
+        thread = new MainThread(getHolder(), this);
+        thread.setRunning(true);
+        thread.start();
+    }
+
     public void update() {
+        switch (layout) {
+            case GAME_FIELD:
+                updateGameField();
+                break;
+            case MENU:
+                break;
+        }
+    }
+
+    public void updateGameField() {
+        if (isPaused) {
+            return;
+        }
         frameCounter++;
         if (frameCounter == MainThread.MAX_FPS) {
             frameCounter = 0;
         }
         if (currentTile != null) {
-            if (frameCounter % FPS_SPLIT == 0) {
+            if (frameCounter % currentSplit == 0) {
                 field.update(currentTile);
                 if (field.checkCollision(currentTile)) {
                     field.setTileIn(currentTile, Cell.FILLED);
@@ -73,13 +102,17 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
                     currentTile.setY(currentTile.getY() + 1);
                 }
             }
-            currentTile.setMovingShift(frameCounter % FPS_SPLIT);
+            currentTile.setMovingShift(frameCounter % currentSplit);
+            if (currentTile.getMovingShift() == 0) {
+                currentSplit = isTouchingSpeedUp ? SMALL_FPS_SPLIT : FPS_SPLIT;
+            }
         }
     }
 
-    @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
+    private void drawGameField(Canvas canvas) {
+        if (canvas == null) {
+            return;
+        }
         Paint paint = new Paint();
         paint.setColor(Color.WHITE);
         canvas.drawRect(new Rect(0, 0, displayWidth, displayHeight), paint);
@@ -89,6 +122,19 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
         paint.setTextSize(textSize);
         canvas.drawText("Score: " + points, step / 2, step, paint);
         canvas.drawText("FPS: " + currentFPS, step / 2, step + textSize * 1.5f, paint);
+
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
+        switch (layout) {
+            case GAME_FIELD:
+                drawGameField(canvas);
+                break;
+            case MENU:
+                break;
+        }
     }
 
     @Override
@@ -100,17 +146,14 @@ public class GameField extends SurfaceView implements SurfaceHolder.Callback {
     public boolean onTouchEvent(MotionEvent event) {
         double oneThird = displayWidth / 3;
         double heightStep = displayHeight * 0.9;
-        FPS_SPLIT = 8;
+
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            isTouching = false;
-        }
-        if (isTouching && event.getY() > heightStep) {
-            FPS_SPLIT = 2;
+            isTouchingSpeedUp = false;
             return true;
         }
         if (event.getAction() == MotionEvent.ACTION_DOWN && currentTile != null) {
-            isTouching = true;
-            if(event.getY() > heightStep){
+            if (event.getY() > heightStep) {
+                isTouchingSpeedUp = true;
                 return true;
             }
             if (event.getX() > oneThird * 2 && field.checkTileSide(currentTile, 1)) {

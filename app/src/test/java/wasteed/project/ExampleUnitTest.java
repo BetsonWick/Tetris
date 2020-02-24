@@ -1,4 +1,4 @@
-package com.example.tetris;
+package wasteed.project;
 
 import org.junit.Test;
 

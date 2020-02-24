@@ -1,4 +1,4 @@
-package com.example.tetris;
+package wasteed.project;
 
 import android.graphics.Color;
 
@@ -49,13 +49,13 @@ public class Tile {
         shape[0] = new int[][]{{1, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
         shape[1] = new int[][]{{0, 0, 1, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
         shape[2] = new int[][]{{0, 0, 0, 0}, {1, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}};
-        shape[3] = new int[][]{{0, 1,  0, 0}, {1, 1, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}};
+        shape[3] = new int[][]{{0, 1, 0, 0}, {1, 1, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}};
         tileToShape.put(TileType.ZIG_ZAG2, shape);
         shape = new int[4][4][4];
         shape[0] = new int[][]{{0, 1, 0, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
         shape[1] = new int[][]{{0, 1, 0, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
         shape[2] = new int[][]{{0, 0, 0, 0}, {1, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
-        shape[3] = new int[][]{{0, 1,  0, 0}, {1, 1, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
+        shape[3] = new int[][]{{0, 1, 0, 0}, {1, 1, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}};
         tileToShape.put(TileType.MIDDLE, shape);
 
     }
@@ -63,6 +63,7 @@ public class Tile {
 
     public Tile(TileType type) {
         rotation = 0;
+        movingShift = 0;
         shape = tileToShape.get(type);
     }
 

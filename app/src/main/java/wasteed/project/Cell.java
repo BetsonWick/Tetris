@@ -1,4 +1,4 @@
-package com.example.tetris;
+package wasteed.project;
 
 public enum Cell {
     BLANK, FILLED, MOVING

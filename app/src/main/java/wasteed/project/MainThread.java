@@ -1,4 +1,4 @@
-package com.example.tetris;
+package wasteed.project;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;

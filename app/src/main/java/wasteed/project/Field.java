@@ -1,4 +1,4 @@
-package com.example.tetris;
+package wasteed.project;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -133,7 +133,7 @@ public class Field {
                     continue;
                 }
                 if (currentUnit.cell == Cell.MOVING) {
-                    shift = tileSize * tileShift / GameField.FPS_SPLIT;
+                    shift = tileSize * tileShift / GameField.currentSplit;
                 }
                 int heightDifference = tilesY * tileSize - height;
                 int leftX = i * tileSize;
