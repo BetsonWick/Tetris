@@ -1,4 +1,5 @@
-package wasteed.project;
+package wastedgames.project;
+
 
 import android.content.Context;
 import android.graphics.Canvas;

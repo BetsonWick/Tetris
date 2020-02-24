@@ -1,4 +1,4 @@
-package wasteed.project;
+package wastedgames.project;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("wasteed.project", appContext.getPackageName());
+        assertEquals("wastedgames.project", appContext.getPackageName());
     }
 }

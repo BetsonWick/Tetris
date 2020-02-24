@@ -1,4 +1,4 @@
-package wasteed.project;
+package wastedgames.project;
 
 import android.graphics.Color;
 
